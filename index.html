@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div>
+                    <h1>ExpenseFlow</h1>
+                    <p class="tagline">Smart expense tracking made simple</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Spent</h3>
+                    <p class="stat-value">₹<span id="total-amount-stat">0</span></p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon budget">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Budget</h3>
+                    <p class="stat-value">₹<span id="budget-display-stat">0</span></p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon remaining">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Remaining</h3>
+                    <p class="stat-value">₹<span id="remaining-amount">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expense Form -->
+        <div class="form-section">
+            <h2><i class="fas fa-plus-circle"></i> Add New Expense</h2>
+            <form id="expense-form" class="expense-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-tag"></i>
+                        <input type="text" id="expense-name" placeholder="Expense name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-rupee-sign"></i>
+                        <input type="number" id="expense-amount" placeholder="Amount" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-list"></i>
+                        <select id="expense-category" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Food">🍽️ Food & Dining</option>
+                            <option value="Transport">🚗 Transport</option>
+                            <option value="Entertainment">🎬 Entertainment</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Bills">💡 Bills & Utilities</option>
+                            <option value="Health">🏥 Healthcare</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="expense-date" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Expense</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Filter and Expenses -->
+        <div class="expenses-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list-ul"></i> Expense History</h2>
+                <div class="filter-group">
+                    <label for="filter-category"><i class="fas fa-filter"></i></label>
+                    <select id="filter-category" class="filter-select">
+                        <option value="All">All Categories</option>
+                        <option value="Food">🍽️ Food & Dining</option>
+                        <option value="Transport">🚗 Transport</option>
+                        <option value="Entertainment">🎬 Entertainment</option>
+                        <option value="Shopping">🛍️ Shopping</option>
+                        <option value="Bills">💡 Bills & Utilities</option>
+                        <option value="Health">🏥 Healthcare</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="expense-table-container">
+                <table class="expense-table">
+                    <thead>
+                        <tr>
+                            <th>Expense</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-list"></tbody>
+                </table>
+                <div class="table-footer">
+                    <div class="total-display">
+                        <span>Total Expenses: </span>
+                        <strong>₹<span id="total-amount">0</span></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget and Chart Row -->
+        <div class="two-column-layout">
+            <!-- Budget Section -->
+            <div class="budget-section">
+                <h2><i class="fas fa-target"></i> Monthly Budget</h2>
+                <form id="budget-form" class="budget-form">
+                    <div class="input-group">
+                        <i class="fas fa-rupee-sign"></i>
+                        <input type="number" id="budget-amount" placeholder="Enter budget amount" min="0" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-save"></i>
+                        <span>Set Budget</span>
+                    </button>
+                </form>
+                <div class="budget-display">
+                    <div class="budget-info">
+                        <span class="budget-label">Current Budget:</span>
+                        <span class="budget-amount">₹<span id="budget-display">0</span></span>
+                    </div>
+                    <div id="budget-status" class="budget-status"></div>
+                    <div class="budget-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="budget-progress-fill"></div>
+                        </div>
+                        <span class="progress-text" id="budget-progress-text">0% used</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <h2><i class="fas fa-chart-pie"></i> Spending Overview</h2>
+                <div class="chart-container">
+                    <canvas id="expense-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Section -->
+        <div class="report-section">
+            <h2><i class="fas fa-file-alt"></i> Expense Report</h2>
+            <div class="report-content" id="report-content">
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Expenses:</span>
+                        <span class="summary-value">₹<span id="report-total">0</span></span>
+                    </div>
+                </div>
+                <div class="category-breakdown" id="report-categories"></div>
+            </div>
+            <button id="print-report-btn" class="btn btn-accent">
+                <i class="fas fa-print"></i>
+                <span>Print / Save Report</span>
+            </button>
+        </div>
+
+        <!-- Email Reminder Section -->
+        <div class="reminder-section">
+            <h2><i class="fas fa-bell"></i> Daily Reminder</h2>
+            <form id="reminder-form" class="reminder-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="reminder-email" placeholder="Your email address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-clock"></i>
+                        <input type="time" id="reminder-time" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-bell"></i>
+                    <span>Set Reminder</span>
+                </button>
+            </form>
+            <div id="reminder-status" class="reminder-status"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
